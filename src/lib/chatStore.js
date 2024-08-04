@@ -41,6 +41,6 @@ export const useChatStore = create((set) => ({
   },
 
   changeBlock: () => {
-    set((state) => ({ ...state, isReceiverBlock: !state, isReceiverBlock }));
+    set((state) => ({ ...state, isReceiverBlock: !state.isReceiverBlock }));
   },
 }));

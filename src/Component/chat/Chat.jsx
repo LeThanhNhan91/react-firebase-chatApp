@@ -23,7 +23,7 @@ const Chat = () => {
   });
 
   const { currentUser } = useUserStore();
-  const { chatId, user } = useChatStore();
+  const { chatId, user, isCurrentUserBlock, isReceiverBlock } = useChatStore();
 
   const endRef = useRef(null);
 
@@ -113,9 +113,9 @@ const Chat = () => {
     <div className="chat">
       <div className="top">
         <div className="user">
-          <img src="./avatar.png" />
+          <img src={user?.avatar || "./avatar.png"} />
           <div className="texts">
-            <span>San San</span>
+            <span>{user.username}</span>
             <p>Online</p>
           </div>
         </div>
@@ -127,7 +127,12 @@ const Chat = () => {
       </div>
       <div className="center">
         {chat?.messages?.map((message) => (
-          <div className={message.senderId === currentUser?.id ? "message own" : "message"} key={message?.createAt}>
+          <div
+            className={
+              message.senderId === currentUser?.id ? "message own" : "message"
+            }
+            key={message?.createAt}
+          >
             <div className="texts">
               {message.img && <img src={message.img} />}
               <p>{message.text}</p>
@@ -161,9 +166,14 @@ const Chat = () => {
         </div>
         <input
           type="text"
-          placeholder="Type a message..."
+          placeholder={
+            isCurrentUserBlock || isReceiverBlock
+              ? "You cannot send any message!"
+              : "Type a message..."
+          }
           value={text}
           onChange={(e) => setText(e.target.value)}
+          disabled={isCurrentUserBlock || isReceiverBlock}
         />
         <div className="emoji">
           <img src="./emoji.png" onClick={() => setOpen((prev) => !prev)} />
@@ -171,7 +181,11 @@ const Chat = () => {
             <EmojiPicker open={open} onEmojiClick={handleEmoji} />
           </div>
         </div>
-        <button className="sendButton" onClick={handleSent}>
+        <button
+          className="sendButton"
+          onClick={handleSent}
+          disabled={isCurrentUserBlock || isReceiverBlock}
+        >
           Send
         </button>
       </div>
