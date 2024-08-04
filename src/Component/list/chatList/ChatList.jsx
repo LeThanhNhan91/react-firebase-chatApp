@@ -9,6 +9,7 @@ import { useChatStore } from "../../../lib/chatStore";
 const ChatList = () => {
   const [chats, setChats] = useState([]);
   const [addMode, setAddMode] = useState(false);
+  const [input, setInput] = useState("");
 
   const { currentUser } = useUserStore();
   const { chatId, changeChat } = useChatStore();
@@ -46,7 +47,9 @@ const ChatList = () => {
       return rest;
     });
 
-    const chatIndex = userChats.findIndex((item) => item.chatId === chat.chatId);
+    const chatIndex = userChats.findIndex(
+      (item) => item.chatId === chat.chatId
+    );
 
     userChats[chatIndex].isSeen = true;
 
@@ -63,12 +66,20 @@ const ChatList = () => {
     }
   };
 
+  const filterChats = chats.filter((c) =>
+    c.user.username.toLowerCase().includes(input.toLowerCase())
+  );
+
   return (
     <div className="chatList">
       <div className="search">
         <div className="searchBar">
           <img src="./search.png" alt="search icon" />
-          <input type="text" placeholder="Search" />
+          <input
+            type="text"
+            placeholder="Search"
+            onChange={(e) => setInput(e.target.value)}
+          />
         </div>
         <img
           className="add"
@@ -77,7 +88,7 @@ const ChatList = () => {
           alt={addMode ? "minus icon" : "plus icon"}
         />
       </div>
-      {chats.map((chat) => (
+      {filterChats.map((chat) => (
         <div
           className="items"
           key={chat.chatId}
